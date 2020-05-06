@@ -1,0 +1,2 @@
+INSERT INTO elvls values (1, 'TEST1234TEST', 123.00);
+INSERT INTO quotes values (1, 'TEST1234TEST', 123.00);

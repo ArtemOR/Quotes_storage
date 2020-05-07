@@ -25,7 +25,7 @@ public class QuoteServiceImplementation implements QuoteService {
     @Autowired
     private QuoteServiceImplementationHelper helper;
 
-    private Lock lock = new ReentrantLock();
+    private final Lock lock = new ReentrantLock();
 
     @Override
     public ElvlForResponse getElvlByIsin(String isin) {
@@ -40,7 +40,6 @@ public class QuoteServiceImplementation implements QuoteService {
     @Override
     public ElvlForResponse handleNewQuote(Quote quote) {
         qouteRepository.save(quote);
-        lock = new ReentrantLock();
         lock.lock();
         try {
             Elvl foundElvl = elvlRepository.searchElvlByIsin(quote.getIsin());

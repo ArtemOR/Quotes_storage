@@ -1,7 +1,6 @@
 package com.luxoft.aryzhov.quotes.integrationTests;
 
 import com.luxoft.aryzhov.quotes.QuoteBuilder;
-import com.luxoft.aryzhov.quotes.TestConstants;
 import com.luxoft.aryzhov.quotes.model.ElvlForResponse;
 import com.luxoft.aryzhov.quotes.model.entities.Quote;
 import org.junit.Test;

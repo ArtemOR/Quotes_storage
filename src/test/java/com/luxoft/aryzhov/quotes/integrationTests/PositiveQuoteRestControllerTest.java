@@ -3,6 +3,7 @@ package com.luxoft.aryzhov.quotes.integrationTests;
 import com.luxoft.aryzhov.quotes.QuoteBuilder;
 import com.luxoft.aryzhov.quotes.model.ElvlForResponse;
 import com.luxoft.aryzhov.quotes.model.entities.Quote;
+import com.luxoft.aryzhov.quotes.service.QuoteServiceImplementation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class PositiveQuoteRestControllerTest {
 
     @Autowired
     private TestRestTemplate testRestTemplate;
+
+    @Autowired
+    private QuoteServiceImplementation service;
 
     private final String BID_VAl1 = "10";
     private final String ASK_VAl1 = "11";
@@ -206,6 +210,6 @@ public class PositiveQuoteRestControllerTest {
     }
 
     private void cleanup(String isin) {
-        testRestTemplate.delete(BASE_URL + isin);
+        service.deleteByIsin(isin);
     }
 }

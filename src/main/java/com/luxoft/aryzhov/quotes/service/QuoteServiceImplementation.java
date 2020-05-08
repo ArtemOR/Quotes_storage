@@ -8,10 +8,10 @@ import com.luxoft.aryzhov.quotes.repository.ElvlRepository;
 import com.luxoft.aryzhov.quotes.repository.QouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 public class QuoteServiceImplementation implements QuoteService {
@@ -25,8 +25,6 @@ public class QuoteServiceImplementation implements QuoteService {
     @Autowired
     private QuoteServiceImplementationHelper helper;
 
-    private final Lock lock = new ReentrantLock();
-
     @Override
     public ElvlForResponse getElvlByIsin(String isin) {
         Elvl foundElvl = elvlRepository.searchElvlByIsin(isin);
@@ -38,18 +36,14 @@ public class QuoteServiceImplementation implements QuoteService {
     }
 
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public ElvlForResponse handleNewQuote(Quote quote) {
         qouteRepository.save(quote);
-        lock.lock();
-        try {
-            Elvl foundElvl = elvlRepository.searchElvlByIsin(quote.getIsin());
-            Elvl updatedElvl = helper.prepareElvlForUpsert(quote, foundElvl);
-            elvlRepository.save(updatedElvl);
+        Elvl foundElvl = elvlRepository.searchElvlByIsin(quote.getIsin());
+        Elvl updatedElvl = helper.prepareElvlForUpsert(quote, foundElvl);
+        elvlRepository.save(updatedElvl);
 
-            return helper.convertElvl(updatedElvl);
-        } finally {
-            lock.unlock();
-        }
+        return helper.convertElvl(updatedElvl);
     }
 
     @Override
@@ -63,7 +57,6 @@ public class QuoteServiceImplementation implements QuoteService {
     }
 
     //has been made for tests cleanUp
-    @Override
     public void deleteByIsin(String isin) {
         elvlRepository.deleteByIsin(isin);
         qouteRepository.deleteByIsin(isin);

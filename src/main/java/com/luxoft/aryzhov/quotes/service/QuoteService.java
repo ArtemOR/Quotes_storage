@@ -13,6 +13,4 @@ public interface QuoteService {
 
     List<ElvlForResponse> getAllElvls();
 
-    void deleteByIsin(String isin);
-
 }

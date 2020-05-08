@@ -49,11 +49,4 @@ public class QuoteRestController {
         return new ResponseEntity<>(elvls, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "{isin}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Void> cleanUp(@PathVariable("isin") String isin) {
-        this.validator.validateIsin(isin);
-        this.quoteService.deleteByIsin(isin);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
 }

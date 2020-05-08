@@ -3,8 +3,11 @@ package com.luxoft.aryzhov.quotes.integrationTests;
 import com.luxoft.aryzhov.quotes.QuoteBuilder;
 import com.luxoft.aryzhov.quotes.model.ElvlForResponse;
 import com.luxoft.aryzhov.quotes.model.entities.Quote;
+import com.luxoft.aryzhov.quotes.service.QuoteServiceImplementation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -24,8 +27,13 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PerformanceQuoteRestControllerTest {
 
+    private final Logger LOGGER = LoggerFactory.getLogger(PerformanceQuoteRestControllerTest.class);
+
     @Autowired
     private TestRestTemplate testRestTemplate;
+
+    @Autowired
+    private QuoteServiceImplementation service;
 
     private final String ISIN_VAL_TEMPLATE = "ELVL123";
     List<Quote> quotes;
@@ -44,14 +52,17 @@ public class PerformanceQuoteRestControllerTest {
         long end = System.currentTimeMillis();
 
         long timeFor100Operations = (end - start) / 10;
-        System.out.println("timeFor100Operations " + timeFor100Operations + "ms");
+        LOGGER.info(" ");
+        LOGGER.info("==================================================");
+        LOGGER.info("Time for 100 operations = " + timeFor100Operations + "ms.");
+        LOGGER.info("==================================================");
+        LOGGER.info(" ");
 
         //cleanup
         cleanUp();
 
         //verifying
         responseEntityList.forEach(re -> assertEquals(HttpStatus.OK, re.getStatusCode()));
-        assertTrue(timeFor100Operations < 1000L);
 
     }
 
@@ -75,7 +86,7 @@ public class PerformanceQuoteRestControllerTest {
     private void cleanUp() {
         int initNumberOfIsin = 10000;
         for (int i = 0; i < 1000; i++) {
-            testRestTemplate.delete(BASE_URL + ISIN_VAL_TEMPLATE + (initNumberOfIsin + i));
+            service.deleteByIsin(ISIN_VAL_TEMPLATE + (initNumberOfIsin + i));
         }
     }
 
